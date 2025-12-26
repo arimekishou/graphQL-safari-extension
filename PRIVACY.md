@@ -54,7 +54,7 @@ We may update this Privacy Policy from time to time. We will notify you of any c
 If you have any questions about this Privacy Policy, please contact us:
 
 - GitHub Issues: https://github.com/borisdrozdov/graphql-inspector/issues
-- Email: [Your Email]
+- Email: drozdov.boris.bd@gmail.com
 
 ## Your Rights
 
