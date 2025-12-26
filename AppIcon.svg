@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="pinkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e535ab"/>
+      <stop offset="100%" style="stop-color:#ff6bcb"/>
+    </linearGradient>
+    <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d9ff"/>
+      <stop offset="100%" style="stop-color:#00ffcc"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="220" fill="url(#bgGradient)"/>
+  
+  <!-- Subtle grid pattern -->
+  <g opacity="0.05">
+    <line x1="256" y1="0" x2="256" y2="1024" stroke="#fff" stroke-width="1"/>
+    <line x1="512" y1="0" x2="512" y2="1024" stroke="#fff" stroke-width="1"/>
+    <line x1="768" y1="0" x2="768" y2="1024" stroke="#fff" stroke-width="1"/>
+    <line x1="0" y1="256" x2="1024" y2="256" stroke="#fff" stroke-width="1"/>
+    <line x1="0" y1="512" x2="1024" y2="512" stroke="#fff" stroke-width="1"/>
+    <line x1="0" y1="768" x2="1024" y2="768" stroke="#fff" stroke-width="1"/>
+  </g>
+  
+  <!-- GraphQL Triangle -->
+  <g filter="url(#shadow)">
+    <path d="M512 180 L220 680 L804 680 Z" 
+          fill="none" 
+          stroke="url(#pinkGradient)" 
+          stroke-width="42" 
+          stroke-linejoin="round"
+          filter="url(#glow)"/>
+  </g>
+  
+  <!-- Center node -->
+  <circle cx="512" cy="480" r="65" fill="url(#pinkGradient)" filter="url(#glow)"/>
+  
+  <!-- Corner nodes -->
+  <circle cx="512" cy="180" r="38" fill="url(#pinkGradient)"/>
+  <circle cx="220" cy="680" r="38" fill="url(#pinkGradient)"/>
+  <circle cx="804" cy="680" r="38" fill="url(#pinkGradient)"/>
+  
+  <!-- Magnifying glass (inspector element) -->
+  <g transform="translate(620, 520)" filter="url(#glow)">
+    <circle cx="100" cy="100" r="95" fill="none" stroke="url(#cyanGradient)" stroke-width="28"/>
+    <line x1="170" y1="170" x2="260" y2="260" stroke="url(#cyanGradient)" stroke-width="32" stroke-linecap="round"/>
+    <!-- Lens shine -->
+    <ellipse cx="65" cy="70" rx="30" ry="20" fill="#fff" opacity="0.2" transform="rotate(-30 65 70)"/>
+  </g>
+  
+  <!-- Small decorative elements -->
+  <circle cx="300" cy="350" r="8" fill="#e535ab" opacity="0.6"/>
+  <circle cx="380" cy="280" r="6" fill="#00d9ff" opacity="0.5"/>
+  <circle cx="700" cy="320" r="7" fill="#e535ab" opacity="0.5"/>
+</svg>
+

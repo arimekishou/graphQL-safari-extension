@@ -1,10 +1,10 @@
 {
     "extension_name": {
-        "message": "GraphQL Extension",
+        "message": "GraphQL Inspector",
         "description": "The display name for the extension."
     },
     "extension_description": {
-        "message": "This is GraphQL Extension. You should tell us what your extension does here.",
+        "message": "Monitor, inspect and debug GraphQL requests in real-time. View queries, mutations, variables and responses with syntax highlighting.",
         "description": "Description of what the extension does."
     }
 }

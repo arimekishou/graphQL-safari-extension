@@ -9,7 +9,7 @@ import Cocoa
 import SafariServices
 import WebKit
 
-let extensionBundleIdentifier = "com.whereareyou.GraphQL.Extension"
+let extensionBundleIdentifier = "com.borisdrozdov.GraphQLInspector.Extension"
 
 class ViewController: NSViewController, WKNavigationDelegate, WKScriptMessageHandler {
 

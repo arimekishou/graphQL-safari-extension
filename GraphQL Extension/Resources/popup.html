@@ -1,11 +1,195 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphQL Inspector</title>
     <link rel="stylesheet" href="popup.css">
-    <script type="module" src="popup.js"></script>
 </head>
 <body>
-    <strong>Hello World!</strong>
+    <!-- Toast notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon"></span>
+        <span class="toast-message"></span>
+    </div>
+
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <svg width="20" height="20" viewBox="0 0 400 400" fill="none">
+                        <path d="M57.5 310.5L200 57.5L342.5 310.5H57.5Z" stroke="currentColor" stroke-width="20"/>
+                        <circle cx="200" cy="200" r="40" fill="currentColor"/>
+                    </svg>
+                    <span>GraphQL Inspector</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <span class="request-count" id="requestCount">0 requests</span>
+                <button class="btn-icon" id="clearBtn" title="Clear all">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="query">Queries</button>
+                <button class="filter-btn" data-filter="mutation">Mutations</button>
+                <button class="filter-btn" data-filter="error">Errors</button>
+            </div>
+            <div class="search-box">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search operations...">
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Request List -->
+            <div class="request-list" id="requestList">
+                <div class="empty-state" id="emptyState">
+                    <svg width="48" height="48" viewBox="0 0 400 400" fill="none">
+                        <path d="M57.5 310.5L200 57.5L342.5 310.5H57.5Z" stroke="currentColor" stroke-width="16"/>
+                        <circle cx="200" cy="200" r="30" fill="currentColor"/>
+                    </svg>
+                    <h3>No GraphQL requests yet</h3>
+                    <p>Make some GraphQL requests on this page to see them here</p>
+                </div>
+            </div>
+
+            <!-- Request Detail -->
+            <div class="request-detail" id="requestDetail">
+                <div class="detail-placeholder" id="detailPlaceholder">
+                    <p>Select a request to view details</p>
+                </div>
+                <div class="detail-content" id="detailContent" style="display: none;">
+                    <!-- Header -->
+                    <div class="detail-header">
+                        <div class="detail-title">
+                            <span class="operation-badge" id="detailBadge">QUERY</span>
+                            <h2 id="detailName">OperationName</h2>
+                        </div>
+                        <div class="detail-actions">
+                            <button class="replay-btn" id="replayBtn" title="Replay request">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 4v6h-6"/>
+                                    <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+                                </svg>
+                                Replay
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-meta-row">
+                        <span class="status" id="detailStatus">200 OK</span>
+                        <span class="duration" id="detailDuration">123ms</span>
+                        <span class="url" id="detailUrl" title=""></span>
+                    </div>
+                    
+                    <!-- Tabs -->
+                    <div class="detail-tabs">
+                        <button class="tab-btn active" data-tab="query">Query</button>
+                        <button class="tab-btn" data-tab="variables">Variables</button>
+                        <button class="tab-btn" data-tab="response">Response</button>
+                        <button class="tab-btn" data-tab="headers">Headers</button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="queryTab">
+                            <div class="code-toolbar">
+                                <button class="edit-btn" id="editQueryBtn" data-target="query">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                    Edit
+                                </button>
+                                <button class="copy-btn" data-target="queryCode">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block" id="queryCode"></pre>
+                            <textarea class="code-editor" id="queryEditor" style="display: none;" spellcheck="false"></textarea>
+                        </div>
+                        <div class="tab-pane" id="variablesTab">
+                            <div class="code-toolbar">
+                                <button class="edit-btn" id="editVariablesBtn" data-target="variables">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                    Edit
+                                </button>
+                                <button class="copy-btn" data-target="variablesCode">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block" id="variablesCode"></pre>
+                            <textarea class="code-editor" id="variablesEditor" style="display: none;" spellcheck="false"></textarea>
+                        </div>
+                        <div class="tab-pane" id="responseTab">
+                            <div class="code-toolbar">
+                                <button class="copy-btn" data-target="responseCode">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block" id="responseCode"></pre>
+                        </div>
+                        <div class="tab-pane" id="headersTab">
+                            <div class="code-toolbar">
+                                <button class="copy-btn" data-target="headersCode">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre class="code-block" id="headersCode"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <button class="pagination-btn" id="prevPage" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+            <span class="page-info" id="pageInfo">Page 1 of 1</span>
+            <button class="pagination-btn" id="nextPage" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
 </body>
 </html>
